@@ -1,14 +1,36 @@
-import React from "react";
+// HotelCardItem.jsx
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 
-function HotelCardItem({ hotel, photoUrl, cardVariants, index }) {
+function HotelCardItem({ hotel, index, cardVariants }) {
+  const [photoUrl, setPhotoUrl] = useState();
+
+  useEffect(() => {
+    if (!hotel?.hotelName || !window.google?.maps) return;
+
+    const service = new window.google.maps.places.PlacesService(
+      document.createElement("div")
+    );
+    const request = {
+      query: `${hotel.hotelName}, ${hotel.hotelAddress}`,
+      fields: ["photos"],
+    };
+
+    service.findPlaceFromQuery(request, (results, status) => {
+      if (
+        status === window.google.maps.places.PlacesServiceStatus.OK &&
+        results?.[0]?.photos?.length
+      ) {
+        const url = results[0].photos[0].getUrl({ maxWidth: 600 });
+        setPhotoUrl(url);
+      }
+    });
+  }, [hotel]);
+
   return (
     <motion.a
       key={index}
-      href={
-        "https://www.google.com/maps/search/?api=1&query=" +
-        encodeURIComponent(hotel.hotelName + ", " + hotel.hotelAddress)
-      }
+      href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(hotel.hotelName + ", " + hotel.hotelAddress)}`}
       target="_blank"
       rel="noreferrer"
       variants={cardVariants}

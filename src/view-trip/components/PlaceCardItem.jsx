@@ -1,46 +1,47 @@
-import React from "react";
-import { Link } from "react-router-dom";
+// PlaceCardItem.jsx
+import React, { useEffect, useState } from "react";
 
 function PlaceCardItem({ place }) {
-  return (
-    <Link
-      to={
-        "https://www.google.com/maps/search/?api=1&query=" +
-        encodeURIComponent(place.placeName)
+  const [photoUrl, setPhotoUrl] = useState();
+
+  useEffect(() => {
+    if (!place?.placeName || !window.google?.maps) return;
+
+    const service = new window.google.maps.places.PlacesService(
+      document.createElement("div")
+    );
+    const request = { query: place.placeName, fields: ["photos"] };
+
+    service.findPlaceFromQuery(request, (results, status) => {
+      if (
+        status === window.google.maps.places.PlacesServiceStatus.OK &&
+        results?.[0]?.photos?.length
+      ) {
+        const url = results[0].photos[0].getUrl({ maxWidth: 400 });
+        setPhotoUrl(url);
       }
+    });
+  }, [place]);
+
+  return (
+    <a
+      href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(place.placeName)}`}
+      target="_blank"
+      rel="noreferrer"
     >
-      <div
-        className="border rounded-2xl p-4 flex gap-4 bg-white
-        hover:shadow-lg hover:-translate-y-[2px] transition-all duration-200
-        cursor-pointer"
-      >
+      <div className="border rounded-2xl p-4 flex gap-4 bg-white hover:shadow-lg cursor-pointer">
         <img
-          src={place.imageUrl || "/placeholder.jpeg"}
+          src={photoUrl || place.imageUrl || "/placeholder.jpeg"}
           alt={place.placeName}
-          className="w-[110px] h-[110px] object-cover rounded-xl shadow-sm"
+          className="w-[110px] h-[110px] object-cover rounded-xl"
         />
-
         <div className="flex flex-col justify-between">
-          <div>
-            <h2 className="font-semibold text-base text-gray-900 leading-tight">
-              {place.placeName || place.title || place.activity}
-            </h2>
-
-            {place.placeDetails && (
-              <p className="text-sm text-gray-500 mt-[2px] line-clamp-2">
-                {place.placeDetails}
-              </p>
-            )}
-          </div>
-
-          {place.timeToTravel && (
-            <p className="text-sm font-medium text-gray-700 mt-2">
-              🕢 {place.timeToTravel}
-            </p>
-          )}
+          <h2 className="font-semibold text-base text-gray-900">
+            {place.placeName}
+          </h2>
         </div>
       </div>
-    </Link>
+    </a>
   );
 }
 

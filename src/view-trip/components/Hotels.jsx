@@ -1,7 +1,9 @@
-import React, { useEffect, useState } from "react";
+// Hotels.jsx
+import React from "react";
 import { motion } from "framer-motion";
-import useGoogleMapsLoader from "@/components/google-maps-API";
+
 import HotelCardItem from "./HotelCardItem";
+import useGoogleMapsLoader from "@/lib/useGoogleMapsLoader";
 
 function Hotels({ trip, apiKey }) {
   const hotelOptions =
@@ -10,46 +12,9 @@ function Hotels({ trip, apiKey }) {
     trip?.tripData?.hotels ||
     [];
 
-  const [hotelPhotos, setHotelPhotos] = useState({});
+  const mapsLoaded = useGoogleMapsLoader(apiKey);
 
-  // Load Google Maps JS API
-  useGoogleMapsLoader(apiKey);
-
-  useEffect(() => {
-    const fetchPhotos = async () => {
-      if (!hotelOptions.length) return;
-
-      if (!window.google?.maps) {
-        setTimeout(fetchPhotos, 500);
-        return;
-      }
-
-      const { PlacesService, PlacesServiceStatus } =
-        await window.google.maps.importLibrary("places");
-      const service = new PlacesService(document.createElement("div"));
-
-      hotelOptions.forEach((hotel) => {
-        const request = {
-          query: `${hotel.hotelName}, ${hotel.hotelAddress}`,
-          fields: ["photos"],
-        };
-
-        service.findPlaceFromQuery(request, (results, status) => {
-          if (
-            status === PlacesServiceStatus.OK &&
-            results?.[0]?.photos?.length
-          ) {
-            setHotelPhotos((prev) => ({
-              ...prev,
-              [hotel.hotelName]: results[0].photos[0].getUrl(),
-            }));
-          }
-        });
-      });
-    };
-
-    fetchPhotos();
-  }, [hotelOptions]);
+  if (!mapsLoaded) return <p>Loading map data...</p>;
 
   // Framer Motion variants
   const containerVariants = {
@@ -83,7 +48,6 @@ function Hotels({ trip, apiKey }) {
             key={index}
             index={index}
             hotel={hotel}
-            photoUrl={hotelPhotos[hotel.hotelName]}
             cardVariants={cardVariants}
           />
         ))}

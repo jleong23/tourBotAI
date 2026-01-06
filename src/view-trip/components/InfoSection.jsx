@@ -22,26 +22,22 @@ function InfoSection({ trip }) {
   // Waits for the Google Maps SDK to load before using PlacesService
   const loadPlacePhoto = async (placeName) => {
     // Wait until window.google and maps.places are available
-    if (!window.google || !window.google.maps || !window.google.maps.places) {
+    if (!window.google?.maps) {
       // Retry after a short delay
       setTimeout(() => loadPlacePhoto(placeName), 500);
       return;
     }
 
-    const service = new window.google.maps.places.PlacesService(
-      document.createElement("div")
-    );
+    const { PlacesService, PlacesServiceStatus } =
+      await window.google.maps.importLibrary("places");
+    const service = new PlacesService(document.createElement("div"));
     const request = {
       query: placeName,
       fields: ["photos"],
     };
 
     service.findPlaceFromQuery(request, (results, status) => {
-      if (
-        status === window.google.maps.places.PlacesServiceStatus.OK &&
-        results &&
-        results[0].photos
-      ) {
+      if (status === PlacesServiceStatus.OK && results && results[0].photos) {
         const url = results[0].photos[0].getUrl({ maxWidth: 800 }); // optional maxWidth
         setPhotoUrl(url);
       }
@@ -53,12 +49,17 @@ function InfoSection({ trip }) {
       <div className="relative">
         <div className="absolute top-5 left-5">
           <Button
+            variant="default"
+            size="icon"
+            iconSize="md"
+            className="!rounded-full !bg-white !text-gray-700 hover:!bg-gray-100 hover:!text-gray-900"
+            aria-label="Go Back"
             onClick={() => navigate(-1)}
-            className="bg-black text-white hover:bg-gray-100 rounded-full h-10 w-10 p-0 shadow-md"
           >
-            <ArrowLeft className="h-6 w-6" />
+            <ArrowLeft />
           </Button>
         </div>
+
         <img
           src={photoUrl || "/placeholder.jpeg"}
           className="h-[340px] w-full object-cover rounded-xl"
@@ -88,10 +89,6 @@ function InfoSection({ trip }) {
             </div>
           </div>
         </div>
-
-        <Button className="mt-0">
-          <Send />
-        </Button>
       </div>
     </div>
   );

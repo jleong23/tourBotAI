@@ -5,6 +5,7 @@ function Hotels({ trip, apiKey }) {
   const hotelOptions =
     trip?.tripData?.travelPlan?.hotelOptions ||
     trip?.tripData?.hotelOptions ||
+    trip?.tripData?.hotels ||
     [];
 
   const [hotelPhotos, setHotelPhotos] = useState({});
@@ -14,35 +15,44 @@ function Hotels({ trip, apiKey }) {
   useGoogleMapsLoader(apiKey);
 
   useEffect(() => {
-    if (!window.google?.maps || !hotelOptions.length) return;
+    const fetchPhotos = async () => {
+      if (!hotelOptions.length) return;
 
-    const service = new window.google.maps.places.PlacesService(
-      document.createElement("div")
-    );
+      if (!window.google?.maps) {
+        setTimeout(fetchPhotos, 500);
+        return;
+      }
 
-    hotelOptions.forEach((hotel) => {
-      const request = {
-        query: `${hotel.hotelName}, ${hotel.hotelAddress}`,
-        fields: ["photos"],
-      };
+      const { PlacesService, PlacesServiceStatus } =
+        await window.google.maps.importLibrary("places");
+      const service = new PlacesService(document.createElement("div"));
 
-      service.findPlaceFromQuery(request, (results, status) => {
-        if (
-          status === window.google.maps.places.PlacesServiceStatus.OK &&
-          results?.[0]?.photos?.length
-        ) {
-          setHotelPhotos((prev) => ({
-            ...prev,
-            [hotel.hotelName]: results[0].photos[0].getUrl(),
-          }));
-        }
+      hotelOptions.forEach((hotel) => {
+        const request = {
+          query: `${hotel.hotelName}, ${hotel.hotelAddress}`,
+          fields: ["photos"],
+        };
+
+        service.findPlaceFromQuery(request, (results, status) => {
+          if (
+            status === PlacesServiceStatus.OK &&
+            results?.[0]?.photos?.length
+          ) {
+            setHotelPhotos((prev) => ({
+              ...prev,
+              [hotel.hotelName]: results[0].photos[0].getUrl(),
+            }));
+          }
+        });
       });
-    });
+    };
+
+    fetchPhotos();
   }, [hotelOptions]);
 
   return (
     <div>
-      <h2 className="font-bold text-xl mt-5 mb-2">Hotel Recommendations</h2>
+      <h2 className="font-bold text-xl mt-5 mb-3">Hotel Recommendations</h2>
 
       <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-5">
         {hotelOptions.map((hotel, index) => {
@@ -78,8 +88,13 @@ function Hotels({ trip, apiKey }) {
                     📍 {hotel.hotelAddress}
                   </h2>
                 )}
-                {hotel.pricePerNight_RM && (
-                  <h2 className="text-sm">💰 {hotel.pricePerNight_RM} RM</h2>
+                {(hotel.pricePerNight_RM || hotel.priceRange) && (
+                  <h2 className="text-sm">
+                    💰{" "}
+                    {hotel.pricePerNight_RM
+                      ? `${hotel.pricePerNight_RM} RM`
+                      : hotel.priceRange}
+                  </h2>
                 )}
                 {hotel.rating && <h2 className="text-sm">⭐ {hotel.rating}</h2>}
               </div>

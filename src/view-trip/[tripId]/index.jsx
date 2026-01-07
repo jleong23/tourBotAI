@@ -37,7 +37,7 @@ function ViewTrip() {
       <InfoSection trip={trip} />
 
       {/* Recommended Hotels */}
-      <Hotels trip={trip} />
+      <Hotels trip={trip} apiKey={import.meta.env.VITE_GOOGLE_PLACE_API_KEY} />
 
       {/* Daily Plan */}
       <PlaceToVisit trip={trip} />

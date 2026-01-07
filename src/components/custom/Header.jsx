@@ -7,11 +7,6 @@ const Header = () => {
       <h1 className="font-semibold">
         <span className="text-orange-500">Tour</span>BotAI
       </h1>
-      <div>
-        <Button iconSize="lg" className="text-base">
-          Sign In
-        </Button>
-      </div>
     </div>
   );
 };

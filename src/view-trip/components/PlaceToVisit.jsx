@@ -14,7 +14,7 @@ function PlaceToVisit({ trip }) {
             </h3>
 
             <div className="grid gap-6 md:grid-cols-2">
-              {item.activities?.map((place, i) => (
+              {(item.plan || item.activities)?.map((place, i) => (
                 <div key={i}>
                   {place.bestTimeToVisit && (
                     <p className="text-xs font-medium text-orange-700 mb-1">

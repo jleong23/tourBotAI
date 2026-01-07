@@ -10,7 +10,10 @@ function PlaceToVisit({ trip }) {
         {trip?.tripData?.itinerary?.map((item, index) => (
           <div key={index} className="space-y-4">
             <h3 className="text-lg font-semibold text-gray-800">
-              Day {item.day || item.dayNumber} : {item.theme}
+              {typeof item.day === "string" &&
+              item.day.toLowerCase().includes("day")
+                ? `${item.day} : ${item.theme}`
+                : `Day ${item.day ?? item.dayNumber}: ${item.theme}`}
             </h3>
 
             <div className="grid gap-6 md:grid-cols-2">

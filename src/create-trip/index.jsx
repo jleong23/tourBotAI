@@ -131,6 +131,7 @@ function CreateTrip() {
       .then((resp) => {
         localStorage.setItem("user", JSON.stringify(resp.data));
         setOpenDialog(false);
+        window.dispatchEvent(new Event("user-updated"));
         OnGenerateTrip();
       })
       .catch(() => toast.error("Failed to get user profile"));
@@ -269,7 +270,7 @@ function CreateTrip() {
         </motion.div>
 
         {/* Google Sign-in Dialog */}
-        <Dialog open={openDialog}>
+        <Dialog open={openDialog} onOpenChange={setOpenDialog}>
           <DialogContent>
             <DialogHeader>
               <DialogTitle className="sr-only">Sign in with Google</DialogTitle>
@@ -280,7 +281,7 @@ function CreateTrip() {
                   </h2>
                   <p>Sign in to the App with Google Authentication securely.</p>
                   <Button
-                    className="mt-5 w-full flex gap-4 items-center justify-center bg-red-600 text-white hover:bg-red-700"
+                    className="mt-5 w-full flex gap-4 items-center justify-center bg-black text-white hover:bg-slate-800"
                     onClick={login}
                   >
                     <FcGoogle className="h-7 w-7" /> Sign in with Google

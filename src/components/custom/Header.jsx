@@ -19,7 +19,7 @@ import {
 import axios from "axios";
 
 const Header = () => {
-  const user = JSON.parse(localStorage.getItem("user"));
+  const [user, setUser] = useState(JSON.parse(localStorage.getItem("user")));
   const [openDialog, setOpenDialog] = useState(false);
 
   const login = useGoogleLogin({
@@ -44,80 +44,53 @@ const Header = () => {
   };
 
   useEffect(() => {
-    console.log(user);
-  });
+    const handleUserUpdate = () => {
+      setUser(JSON.parse(localStorage.getItem("user")));
+    };
+    window.addEventListener("user-updated", handleUserUpdate);
+    return () => window.removeEventListener("user-updated", handleUserUpdate);
+  }, []);
+
   return (
-    <div className="w-full p-3 shadow-sm flex justify-between items-center px-5">
-      <h1 className="font-semibold">
-        <span className="text-orange-500">Tour</span>BotAI
-      </h1>
-      <div>
-        {user ? (
-          <div className="flex items-center gap-3">
-            {/* Desktop View */}
-            <div className="hidden md:flex items-center gap-3">
-              <a href="/create-trip">
-                <Button
-                  variant="outline"
-                  className="!rounded-full !bg-slate-100 border-slate-500"
-                >
-                  + Create Trip
-                </Button>
-              </a>
-              <a href="/my-trips">
-                <Button
-                  variant="outline"
-                  className="!rounded-full !bg-slate-100 border-slate-500"
-                >
-                  My Trips
-                </Button>
-              </a>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <img
-                    src={user?.picture}
-                    className="h-[50px] w-[50px] rounded-full object-cover border cursor-pointer"
-                    alt="Profile"
-                  />
-                </PopoverTrigger>
+    <header className="w-full bg-white border-b border-slate-200">
+      <div className="max-w-7xl mx-auto px-5 py-3 flex justify-between items-center">
+        {/* Logo */}
+        <h1 className="font-semibold text-lg tracking-tight">
+          <span className="text-orange-500">Tour</span>BotAI
+        </h1>
 
-                <PopoverContent className="bg-white text-gray-900 border shadow-sm">
-                  <h2
-                    className="cursor-pointer"
-                    onClick={() => {
-                      googleLogout();
-                      localStorage.clear();
-                      window.location.reload();
-                    }}
+        {/* Right Section */}
+        <div className="flex items-center gap-3">
+          {user ? (
+            <>
+              {/* Desktop */}
+              <div className="hidden md:flex items-center gap-3">
+                <a href="/create-trip">
+                  <Button className="rounded-full px-5">+ Create Trip</Button>
+                </a>
+
+                <a href="/my-trips">
+                  <Button
+                    variant="ghost"
+                    className="rounded-full text-gray-700 hover:bg-slate-100"
                   >
-                    Logout
-                  </h2>
-                </PopoverContent>
-              </Popover>
-            </div>
+                    My Trips
+                  </Button>
+                </a>
 
-            {/* Mobile View */}
-            <div className="md:hidden">
-              <Popover>
-                <PopoverTrigger>
-                  <IoMenu className="h-8 w-8 text-white" />
-                </PopoverTrigger>
-                <PopoverContent className="bg-white border shadow-sm w-48">
-                  <div className="flex flex-col gap-2">
-                    <a
-                      href="/create-trip"
-                      className="font-medium hover:bg-slate-100 p-2 rounded-md"
-                    >
-                      Create Trip
-                    </a>
-                    <a
-                      href="/my-trips"
-                      className="font-medium hover:bg-slate-100 p-2 rounded-md"
-                    >
-                      My Trips
-                    </a>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <img
+                      src={user?.picture}
+                      alt="Profile"
+                      referrerPolicy="no-referrer"
+                      className="h-10 w-10 rounded-full object-cover cursor-pointer border border-slate-200 hover:ring-2 hover:ring-slate-300 transition"
+                    />
+                  </PopoverTrigger>
+
+                  <PopoverContent className="w-40 p-2">
                     <h2
-                      className="cursor-pointer font-medium hover:bg-slate-100 p-2 rounded-md text-red-500"
+                      className="text-sm text-red-500 cursor-pointer hover:bg-slate-100 px-2 py-2 rounded-md"
                       onClick={() => {
                         googleLogout();
                         localStorage.clear();
@@ -126,39 +99,78 @@ const Header = () => {
                     >
                       Logout
                     </h2>
-                  </div>
-                </PopoverContent>
-              </Popover>
-            </div>
-          </div>
-        ) : (
-          <Button onClick={() => setOpenDialog(true)}>Sign In</Button>
-        )}
-        <Dialog open={openDialog} onOpenChange={setOpenDialog}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle className="sr-only">Sign in with Google</DialogTitle>
+                  </PopoverContent>
+                </Popover>
+              </div>
 
-              <DialogDescription asChild>
-                <div>
-                  <h2 className="font-bold text-lg mt-7">
-                    Sign in With Google
-                  </h2>
-                  <p>Sign in to the App with Google Authentication securely.</p>
+              {/* Mobile */}
+              <div className="md:hidden">
+                <Popover>
+                  <PopoverTrigger>
+                    <IoMenu className="h-7 w-7 text-slate-700" />
+                  </PopoverTrigger>
 
-                  <button
-                    className="mt-5 w-full flex gap-4 items-center justify-center bg-red-600 text-white hover:bg-red-700"
-                    onClick={login}
-                  >
-                    <FcGoogle className="h-7 w-7" /> Sign in with Google
-                  </button>
-                </div>
-              </DialogDescription>
-            </DialogHeader>
-          </DialogContent>
-        </Dialog>
+                  <PopoverContent className="w-44 p-2">
+                    <div className="flex flex-col gap-1">
+                      <a
+                        href="/create-trip"
+                        className="px-2 py-2 rounded-md hover:bg-slate-100"
+                      >
+                        Create Trip
+                      </a>
+                      <a
+                        href="/my-trips"
+                        className="px-2 py-2 rounded-md hover:bg-slate-100"
+                      >
+                        My Trips
+                      </a>
+                      <h2
+                        className="cursor-pointer px-2 py-2 rounded-md hover:bg-slate-100 text-red-500"
+                        onClick={() => {
+                          googleLogout();
+                          localStorage.clear();
+                          window.location.reload();
+                        }}
+                      >
+                        Logout
+                      </h2>
+                    </div>
+                  </PopoverContent>
+                </Popover>
+              </div>
+            </>
+          ) : (
+            <Button onClick={() => setOpenDialog(true)}>Sign In</Button>
+          )}
+        </div>
       </div>
-    </div>
+
+      {/* Sign In Dialog */}
+      <Dialog open={openDialog} onOpenChange={setOpenDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="sr-only">Sign in with Google</DialogTitle>
+
+            <DialogDescription asChild>
+              <div>
+                <h2 className="font-bold text-lg mt-6">Sign in with Google</h2>
+                <p className="text-sm text-gray-600">
+                  Secure authentication using Google.
+                </p>
+
+                <Button
+                  className="mt-6 w-full flex gap-3 items-center justify-center"
+                  onClick={login}
+                >
+                  <FcGoogle className="h-6 w-6" />
+                  Continue with Google
+                </Button>
+              </div>
+            </DialogDescription>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
+    </header>
   );
 };
 

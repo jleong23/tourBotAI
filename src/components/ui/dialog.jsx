@@ -49,7 +49,7 @@ const DialogContent = React.forwardRef(
         {children}
         {showCloseButton && (
           <DialogClose asChild>
-            <button className="absolute right-4 top-4 p-2 rounded-full bg-red-600 text-white hover:bg-red-700 hover:scale-110 transition-transform duration-150 flex items-center justify-center">
+            <button className="absolute right-4 top-4 p-2 rounded-full bg-black text-white hover:bg-slate-900 hover:scale-110 transition-transform duration-150 flex items-center justify-center">
               <IoClose className="h-6 w-6 pointer-events-none" />
               <span className="sr-only">Close</span>
             </button>

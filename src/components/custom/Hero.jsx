@@ -52,7 +52,7 @@ const Hero = () => {
         <motion.div variants={fadeUp}>
           <Link to="/create-trip">
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <Button className="px-8 py-6 text-lg font-semibold rounded-xl shadow-md hover:shadow-lg transition">
+              <Button className="px-8 py-6 text-lg font-semibold rounded-xl shadow-md hover:shadow-lg transition !bg-black">
                 Get Started — It’s Free
               </Button>
             </motion.div>

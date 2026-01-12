@@ -19,6 +19,7 @@ import {
   MapPinHouse,
   CalendarDays,
   CircleDollarSign,
+  Icon,
 } from "lucide-react";
 
 import {
@@ -207,23 +208,32 @@ function CreateTrip() {
           </div>
 
           <div className="grid grid-cols-3 gap-5">
-            {SelectBudgetOptions.map((item, index) => (
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                key={index}
-                onClick={() => handleInputChange("budget", item.title)}
-                className={`
-                  p-4 border rounded-lg cursor-pointer
-                  ${formData?.budget == item.title ? "shadow-xl border-black" : "hover:shadow-lg"}
-                  transition-all duration-200
-                `}
-              >
-                <h2 className="text-4xl">{item.icon}</h2>
-                <h2 className="font-bold text-lg">{item.title}</h2>
-                <h2 className="text-sm text-gray-600">{item.description}</h2>
-              </motion.div>
-            ))}
+            {SelectBudgetOptions.map((item, index) => {
+              const Icon = item.icon;
+
+              return (
+                <motion.div
+                  key={index}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => handleInputChange("budget", item.title)}
+                  className={`
+        p-4 border rounded-lg cursor-pointer
+        ${
+          formData?.budget === item.title
+            ? "border-black bg-slate-100"
+            : "hover:shadow-lg"
+        }
+
+        transition-all duration-200
+      `}
+                >
+                  <Icon className={`text-2xl mb-2 ${item.color}`} />
+                  <h2 className="font-bold text-lg">{item.title}</h2>
+                  <h2 className="text-sm text-gray-600">{item.description}</h2>
+                </motion.div>
+              );
+            })}
           </div>
         </motion.div>
 
@@ -234,24 +244,32 @@ function CreateTrip() {
             <h2 className="text-xl my-3 font-medium">Travelers</h2>
           </div>
 
-          <div className="grid grid-cols-4 gap-5">
-            {SelectTravelerList.map((item, index) => (
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                key={index}
-                onClick={() => handleInputChange("traveler", item.people)}
-                className={`
-                  p-4 border rounded-lg cursor-pointer
-                  ${formData?.traveler == item.people ? "shadow-xl border-black" : "hover:shadow-lg"}
-                  transition-all duration-200
-                `}
-              >
-                <h2 className="text-4xl">{item.icon}</h2>
-                <h2 className="font-bold text-lg">{item.title}</h2>
-                <h2 className="text-sm text-gray-600">{item.description}</h2>
-              </motion.div>
-            ))}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
+            {SelectTravelerList.map((item, index) => {
+              const Icon = item.icon;
+
+              return (
+                <motion.div
+                  key={index}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => handleInputChange("traveler", item.people)}
+                  className={`
+        p-4 border rounded-lg cursor-pointer
+        ${
+          formData?.traveler === item.people
+            ? "border-black bg-slate-100"
+            : "hover:shadow-lg"
+        }
+        transition-all duration-200
+      `}
+                >
+                  <Icon className={`text-2xl mb-2 ${item.color}`} />
+                  <h2 className="font-bold text-lg">{item.title}</h2>
+                  <h2 className="text-sm text-gray-600">{item.description}</h2>
+                </motion.div>
+              );
+            })}
           </div>
         </motion.div>
 

@@ -33,7 +33,7 @@ const Header = () => {
         `https://www.googleapis.com/oauth2/v3/userinfo?access_token=${tokenInfo?.access_token}`,
         {
           headers: { Authorization: `Bearer ${tokenInfo?.access_token}` },
-        }
+        },
       )
       .then((resp) => {
         localStorage.setItem("user", JSON.stringify(resp.data));
@@ -55,7 +55,7 @@ const Header = () => {
     <header className="w-full bg-white border-b border-slate-200">
       <div className="max-w-7xl mx-auto px-5 py-3 flex justify-between items-center">
         {/* Logo */}
-        <h1 className="font-semibold text-lg tracking-tight">
+        <h1 className="font-semibold text-xl md:text-3xl  tracking-tight">
           <span className="text-orange-500">Tour</span>BotAI
         </h1>
 

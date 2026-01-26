@@ -5,19 +5,21 @@ import { motion } from "framer-motion";
 function HotelCardItem({ hotel, index, cardVariants }) {
   const [photoUrl, setPhotoUrl] = useState();
 
-  const hotelName = hotel?.hotelName || hotel?.hotel_name;
-  const hotelAddress = hotel?.hotelAddress || hotel?.hotel_address;
+  const hotelName = hotel?.hotelName || hotel?.hotel_name || hotel?.HotelName;
+  const hotelAddress =
+    hotel?.hotelAddress || hotel?.hotel_address || hotel?.HotelAddress;
   const hotelPrice =
     hotel?.pricePerNight_RM ||
     hotel?.price_per_night_rm ||
     hotel?.priceRange ||
-    hotel?.price;
+    hotel?.price ||
+    hotel?.PricePerNight;
 
   useEffect(() => {
     if (!hotelName || !window.google?.maps) return;
 
     const service = new window.google.maps.places.PlacesService(
-      document.createElement("div")
+      document.createElement("div"),
     );
     const request = {
       query: `${hotelName}, ${hotelAddress}`,
@@ -52,6 +54,7 @@ function HotelCardItem({ hotel, index, cardVariants }) {
             photoUrl ||
             hotel?.hotelImageUrl ||
             hotel?.hotel_image_url ||
+            hotel?.HotelImageUrl ||
             "/placeholder-hotel.jpeg"
           }
           alt={hotelName || "Hotel"}

@@ -79,7 +79,7 @@ function CreateTrip() {
 
     const FINAL_PROMPT = AI_PROMPT.replace(
       "{location",
-      formData?.location?.label
+      formData?.location?.label,
     )
       .replace("{totalDays}", formData?.days)
       .replace("{traveler}", formData?.traveler)
@@ -127,7 +127,7 @@ function CreateTrip() {
         `https://www.googleapis.com/oauth2/v3/userinfo?access_token=${tokenInfo?.access_token}`,
         {
           headers: { Authorization: `Bearer ${tokenInfo?.access_token}` },
-        }
+        },
       )
       .then((resp) => {
         localStorage.setItem("user", JSON.stringify(resp.data));
@@ -278,10 +278,15 @@ function CreateTrip() {
           <Button
             disabled={loading}
             onClick={OnGenerateTrip}
-            className="flex items-center gap-2"
+            className="flex items-center gap-3 min-w-[220px] justify-center"
           >
             {loading ? (
-              <AiOutlineLoading className="h-6 w-6 animate-spin" />
+              <>
+                <AiOutlineLoading className="animate-spin text-lg" />
+                <span className="text-sm font-medium">
+                  Generating your best travel plan…
+                </span>
+              </>
             ) : (
               "Generate Trip"
             )}
